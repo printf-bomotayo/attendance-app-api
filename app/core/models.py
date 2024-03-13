@@ -2,6 +2,7 @@
 Database models.
 """
 
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -45,3 +46,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()  ## this is used to  assign user manager in django.
 
     USERNAME_FIELD = 'email' ## this is how to set the custom user model to use email as the authentication as against using Username which is the default that comes with Django user manager
+
+
+class Attendance(models.Model):
+    """Attendance object."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='attendances'
+        )
+    date = models.DateField()
+    time = models.TimeField()
+    status = models.CharField(max_length=5, choices=[
+        ('Late', 'Late'),
+        ('Early', 'Early'),
+    ])
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.name}'s attendance on {self.date}"
