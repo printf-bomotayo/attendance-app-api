@@ -66,3 +66,12 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.user.name}'s attendance on {self.date}"
+    
+    def save(self, *args, **kwargs):
+        """Override save method to set status based on time."""
+        if self.time.hour < 8:
+            self.status = 'Early'
+        else:
+            self.status = 'Late'
+        super().save(*args, **kwargs)
+    
